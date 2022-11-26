@@ -8,8 +8,12 @@ class User {
    * Устанавливает текущего пользователя в
    * локальном хранилище.
    * */
-  static setCurrent(user) {
+  constructor() {
+    this.URL = '/user';
+  }
 
+  static setCurrent(user) {
+    localStorage.user = JSON.stringify(user);
   }
 
   /**
@@ -17,7 +21,7 @@ class User {
    * пользователе из локального хранилища.
    * */
   static unsetCurrent() {
-
+    localStorage.removeItem('user');
   }
 
   /**
@@ -25,7 +29,7 @@ class User {
    * из локального хранилища
    * */
   static current() {
-
+    return localStorage.user ? JSON.parse(localStorage.user) : false;
   }
 
   /**
@@ -33,7 +37,22 @@ class User {
    * авторизованном пользователе.
    * */
   static fetch(callback) {
-
+    createRequest({
+      url: '/user' + '/current',
+      method: 'GET',
+      responseType: 'json',
+      callback( err, response ) {
+        if ( response ) {
+          if (response.succes) {
+            this.setCurrent( response.user );
+            return response;
+          } else {
+            User.unsetCurrent();
+          }
+        }
+        callback( err, response );
+      }
+    });
   }
 
   /**
@@ -44,7 +63,7 @@ class User {
    * */
   static login(data, callback) {
     createRequest({
-      url: this.URL + '/login',
+      url: '/user' + '/login',
       method: 'POST',
       responseType: 'json',
       data,
@@ -64,7 +83,18 @@ class User {
    * User.setCurrent.
    * */
   static register(data, callback) {
-
+    createRequest({
+      url: '/user' + '/register',
+      method: 'POST',
+      responseType: 'json',
+      data,
+      callback: (err, response) => {
+        if (response && response.user) {
+          this.setCurrent(response.user);
+        }
+        callback(err, response);
+      }
+    });
   }
 
   /**
@@ -72,6 +102,16 @@ class User {
    * выхода необходимо вызвать метод User.unsetCurrent
    * */
   static logout(callback) {
-
+    createRequest({
+      url: '/user' + '/logout',
+      method: 'POST',
+      responseType: 'json',
+      callback: (err, response) => {
+        if (response && response.user) {
+          this.unsetCurrent();
+        }
+        callback(err, response);
+      }
+    });
   }
 }
