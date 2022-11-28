@@ -16,7 +16,7 @@ class Account extends Entity {
       url: '/account' + '/' + id,
       method: 'GET',
       responseType: 'json',
-      data,
+      //data,
       callback: (err, response) => {
         callback(err, response);
       }

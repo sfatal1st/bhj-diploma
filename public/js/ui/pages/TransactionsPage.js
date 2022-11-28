@@ -11,14 +11,20 @@ class TransactionsPage {
    * через registerEvents()
    * */
   constructor( element ) {
-
+    this.element = element || alert('Элемент не передан!');
+    this.lastOptions = undefined;
+    this.registerEvents();
   }
 
   /**
    * Вызывает метод render для отрисовки страницы
    * */
   update() {
-
+    if (this.lastOptions) {
+      this.render(this.lastOptions);
+    } else {
+      this.render();
+    }
   }
 
   /**
@@ -28,7 +34,9 @@ class TransactionsPage {
    * TransactionsPage.removeAccount соответственно
    * */
   registerEvents() {
-
+    this.element.querySelector('.remove-account').addEventListener('click', () => {
+      this.removeAccount();
+    });
   }
 
   /**
@@ -41,7 +49,19 @@ class TransactionsPage {
    * для обновления приложения
    * */
   removeAccount() {
-
+    if (confirm('Вы действительно хотите удалить счёт?')) {
+      if (this.lastOptions) {
+        Account.remove(this.lastOptions.account_id, (err, response) => {
+          if (response && response.success) {
+            this.clear();
+            App.updateWidgets();
+            App.updateForms();
+          } else if (response) {
+            alert(response.error);
+          }
+        });
+      }
+    }
   }
 
   /**
@@ -51,7 +71,15 @@ class TransactionsPage {
    * либо обновляйте текущую страницу (метод update) и виджет со счетами
    * */
   removeTransaction( id ) {
-
+    if (confirm('Вы действительно хотите удалить эту транзакцию?')) {
+      Transaction.remove2(id, (err, response) => {
+        if (response && response.success) {
+          App.update();
+        } else if (response) {
+          alert(response.error);
+        }
+      });
+    }
   }
 
   /**
@@ -61,7 +89,23 @@ class TransactionsPage {
    * в TransactionsPage.renderTransactions()
    * */
   render(options){
-
+    this.lastOptions = options;
+    if (options) {
+      Account.get(options.account_id, (err, response) => {
+        if (response && response.success) {
+          this.renderTitle(response.data.name);
+        } else if (response) {
+          alert(response.error);
+        }
+      });
+      Transaction.list2(options, (err, response) => {
+        if (response && response.success) {       
+          this.renderTransactions(response.data);
+        } else if (response) {
+          alert(response.error);
+        }
+      });
+    }
   }
 
   /**
@@ -70,14 +114,16 @@ class TransactionsPage {
    * Устанавливает заголовок: «Название счёта»
    * */
   clear() {
-
+    this.renderTransactions([]);
+    this.renderTitle('Название счёта');
+    this.lastOptions = undefined;
   }
 
   /**
    * Устанавливает заголовок в элемент .content-title
    * */
   renderTitle(name){
-
+    this.element.querySelector('.content-title').textContent = name;
   }
 
   /**
@@ -85,7 +131,18 @@ class TransactionsPage {
    * в формат «10 марта 2019 г. в 03:20»
    * */
   formatDate(date){
+    const dateNew = new Date(date);
+    const optionsDate = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    };
+    const optionsTime = {
+      hour: 'numeric',
+      minute: 'numeric',
+    };
 
+    return dateNew.toLocaleString("ru", optionsDate) + ' в ' + dateNew.toLocaleString("ru", optionsTime);
   }
 
   /**
@@ -93,7 +150,64 @@ class TransactionsPage {
    * item - объект с информацией о транзакции
    * */
   getTransactionHTML(item){
+    let date = this.formatDate(item.created_at);
+    let classTransaction;
+    if (item.type === 'income') {
+      classTransaction = 'transaction_income'
+    } else {
+      classTransaction = 'transaction_expense'
+    };
+    
+    function createElem() {
+      let divOne = document.createElement('div');
+      let divTwo = document.createElement('div');
+      let divThree = document.createElement('div');
+      let divFour = document.createElement('div');
+      let divFive = document.createElement('div');
+      let divSix = document.createElement('div');
+      let divSeven = document.createElement('div');
+      let divEight = document.createElement('div');
+      let spanOne = document.createElement('span');
+      let spanTwo = document.createElement('span');
+      let button = document.createElement('button');
+      let h4 = document.createElement('h4');
+      let i = document.createElement('i');
 
+      divOne.classList.add('transaction', classTransaction, 'row');
+      divTwo.classList.add('col-md-7', 'transaction__details');
+      divThree.classList.add('transaction__icon');
+      divFour.classList.add('transaction__info');
+      divFive.classList.add('transaction__date');
+      divSix.classList.add('col-md-3');
+      divSeven.classList.add('transaction__summ');
+      divEight.classList.add('col-md-2', 'transaction__controls');
+      spanOne.classList.add('fa', 'fa-money', 'fa-2x');
+      spanTwo.classList.add('currency');
+      button.classList.add('btn', 'btn-danger', 'transaction__remove');
+      h4.classList.add('transaction__title');
+      i.classList.add('fa', 'fa-trash');
+
+      divThree.append(spanOne);
+      h4.append(item.name);
+      divFive.append(date);
+      divFour.appendChild(h4);
+      divFour.appendChild(divFive);
+      divTwo.appendChild(divThree);
+      divTwo.appendChild(divFour);
+      spanTwo.append('₽');
+      divSeven.append(item.sum);
+      divSeven.appendChild(spanTwo);
+      divSix.appendChild(divSeven);
+      button.setAttribute('data-id', item.id);
+      button.appendChild(i);
+      divEight.appendChild(button);
+      divOne.appendChild(divTwo);
+      divOne.appendChild(divSix);
+      divOne.appendChild(divEight);
+      return divOne;
+    }
+
+    return createElem();
   }
 
   /**
@@ -101,6 +215,13 @@ class TransactionsPage {
    * используя getTransactionHTML
    * */
   renderTransactions(data){
-
+    this.element.querySelector('.content').innerHTML = '';
+    data.forEach ((item) => {
+      let transaction = this.getTransactionHTML(item);
+      this.element.querySelector('.content').insertAdjacentElement('beforeend', transaction);
+      transaction.addEventListener('click', () => {
+        this.removeTransaction(item.account_id);
+      });
+    });
   }
 }

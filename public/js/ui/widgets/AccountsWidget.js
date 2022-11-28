@@ -31,14 +31,14 @@ class AccountsWidget {
       App.getModal('createAccount');
       App.modals.createAccount.open();
     });  
-    for (let i = 0; i < this.element.querySelectorAll('.account').length; i++) {
-      console.log(this.element.querySelectorAll('.account')[i].classList);
-      this.element.querySelectorAll('.account')[i].addEventListener('click', (event) => {
-        event.preventDefault();
-        this.onSelectAccount(this.element.querySelectorAll('.account')[i]);
-      })   
-    }
-}
+    //for (let i = 0; i < this.element.querySelectorAll('.account').length; i++) {
+    //  console.log(this.element.querySelectorAll('.account')[i].classList);
+    //  this.element.querySelectorAll('.account')[i].addEventListener('click', (event) => {
+    //    event.preventDefault();
+    //    this.onSelectAccount(this.element.querySelectorAll('.account')[i]);
+    //  })   
+    //}
+  }
 
   /**
    * Метод доступен только авторизованным пользователям
@@ -82,11 +82,13 @@ class AccountsWidget {
    * счёта класс .active.
    * Вызывает App.showPage( 'transactions', { account_id: id_счёта });
    * */
-  onSelectAccount(element) {
+  onSelectAccount(element, item) {
     element.addEventListener('click', () => {
-      this.listAccounts.forEach((item) => item.classList.remove('active'));
+      for (let elem of this.element.querySelectorAll('.account')) {
+        elem.classList.remove('active');
+      }
       element.classList.add('active');
-      App.showPage('transactions', {account_id: element.id});
+      App.showPage('transactions', {account_id: item.id});
     })
   }
 
@@ -96,14 +98,30 @@ class AccountsWidget {
    * item - объект с данными о счёте
    * */
   getAccountHTML(item){
-    return `
-      <li class="account" data-id=${item.id}>
-        <a href="#">
-          <span>${item.name}</span> /
-          <span>${item.sum} ₽</span>
-        </a>
-      </li>
-    `;
+    let li = document.createElement('li');
+    let a = document.createElement('a');
+    let spanOne = document.createElement('span');
+    let spanTwo = document.createElement('span');
+
+    li.classList.add('account');
+    li.setAttribute('data-id', item.id);
+    a.href = '#';
+    spanOne.append(item.name);
+    spanTwo.append(item.sum);
+    a.appendChild(spanOne);
+    a.append(' / ');
+    a.appendChild(spanTwo);
+    a.append(' ₽');
+    li.appendChild(a);
+    return li;
+    //return `
+    //  <li class="account" data-id=${item.id}>
+    //    <a href="#">
+    //      <span>${item.name}</span> /
+    //      <span>${item.sum} ₽</span>
+    //    </a>
+    //  </li>
+    //`;
   }
 
   /**
@@ -114,7 +132,13 @@ class AccountsWidget {
    * */
   renderItem(data){
     for (let item of data) {
-      this.element.insertAdjacentHTML("beforeend", this.getAccountHTML(item));
+      //this.element.insertAdjacentHTML("beforeend", this.getAccountHTML(item));
+      let account = this.getAccountHTML(item);
+      //account.addEventListener('click', () => {
+        //event.preventDefault();
+      this.onSelectAccount(account, item);
+      //})  
+      this.element.insertAdjacentElement('beforeend', account);
     }
   }
 }

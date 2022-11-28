@@ -4,13 +4,13 @@
  * Имеет свойство URL, равное '/user'.
  * */
 class User {
+  constructor() {
+    this.URL = '/user';
+  }
   /**
    * Устанавливает текущего пользователя в
    * локальном хранилище.
    * */
-  constructor() {
-    this.URL = '/user';
-  }
 
   static setCurrent(user) {
     localStorage.user = JSON.stringify(user);
@@ -44,7 +44,7 @@ class User {
       callback( err, response ) {
         if ( response ) {
           if (response.succes) {
-            this.setCurrent( response.user );
+            User.setCurrent( response.user );
             return response;
           } else {
             User.unsetCurrent();

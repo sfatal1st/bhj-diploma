@@ -8,7 +8,7 @@ const createRequest = (options = {}) => {
             if (options.data) {
                 data = Object.entries(options.data);
                 for ([key, value] of data) {
-                url += key + '=' + value + '&';
+                url += '?' + key + '=' + value;
                 }
             }
         }
@@ -25,7 +25,7 @@ const createRequest = (options = {}) => {
             };
         });
         xhr.addEventListener('error', () => {
-            options.callback(xhr.error, xhr.response);
+            options.callback(err, xhr.response);
         });
     }
     catch (err) {

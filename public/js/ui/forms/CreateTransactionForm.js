@@ -21,13 +21,14 @@ class CreateTransactionForm extends AsyncForm {
   renderAccountsList() {
     const user = User.current();
     if (user) {
-      Account.list(user, (err, response) => {
+      Account.list('', (err, response) => {
         if (response && response.success) {
-          if (CreateTransactionForm.element.querySelector('#income-accounts-list')) {
-            
-          } else if (CreateTransactionForm.element.querySelector('#expense-accounts-list')) {
-            
-          }
+          response.data.forEach ((item) => {
+              const options = `
+                <option value="${item.id}">${item.name}</option>
+              `;
+              this.element.querySelector('.accounts-select').insertAdjacentHTML('beforeend', options);
+            })
         } else if (response) {
           alert(response.error);
         }
@@ -42,12 +43,12 @@ class CreateTransactionForm extends AsyncForm {
    * в котором находится форма
    * */
   onSubmit(data) {
-    Transaction.create(data, (err, response) => {
+    Transaction.create2(data, (err, response) => {
       if (response.success) {
-        CreateTransactionForm.element.reset();
-        if (CreateTransactionForm.element.querySelector('#income-accounts-list')) {
+        this.element.reset();
+        if (this.element.querySelector('#income-accounts-list')) {
           App.modals.newIncome.close();
-        } else if (CreateTransactionForm.element.querySelector('#expense-accounts-list')) {
+        } else if (this.element.querySelector('#expense-accounts-list')) {
           App.modals.newExpense.close();
         }
         App.update();

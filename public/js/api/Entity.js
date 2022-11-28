@@ -27,6 +27,21 @@ class Entity {
       }
     });
   }
+  static list2(data, callback){
+    createRequest({
+      url: '/transaction',
+      method: 'GET',
+      responseType: 'json',
+      data,
+      callback: (err, response) => {
+        //if (response && response.success) {
+        //  return response.data;
+        //}
+        //return err;
+        callback(err, response);
+      }
+    });
+  }
 
   /**
    * Создаёт счёт или доход/расход с помощью запроса
@@ -49,6 +64,22 @@ class Entity {
     });
   }
 
+  static create2(data, callback) {
+    createRequest({
+      url: '/transaction',
+      method: 'PUT',
+      responseType: 'json',
+      data,
+      callback: (err, response) => {
+        //if (response && response.success) {
+        //  return response.data;
+        //}
+        //return err;
+        callback(err, response);
+      }
+    });
+  }
+
   /**
    * Удаляет информацию о счёте или доходе/расходе
    * (в зависимости от того, что наследуется от Entity)
@@ -56,6 +87,21 @@ class Entity {
   static remove(data, callback ) {
     createRequest({
       url: '/account',
+      method: 'DELETE',
+      responseType: 'json',
+      data,
+      callback: (err, response) => {
+        //if (response && response.success) {
+        //  return response.data;
+        //}
+        //return err;
+        callback(err, response);
+      }
+    });
+  }
+  static remove2(data, callback ) {
+    createRequest({
+      url: '/transaction',
       method: 'DELETE',
       responseType: 'json',
       data,
