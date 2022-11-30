@@ -29,6 +29,6 @@ const createRequest = (options = {}) => {
         });
     }
     catch (err) {
-       options.callback(err, xhr.response);
+       options.callback(err);
     }
 }

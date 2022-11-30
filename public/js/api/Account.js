@@ -7,16 +7,15 @@ class Account extends Entity {
   /**
    * Получает информацию о счёте
    * */
-  constructor() {
-    this.URL = '/account';
-  }
+  
+  static URL = '/account';
+  
 
   static get(id = '', callback){
     createRequest({
-      url: '/account' + '/' + id,
+      url: this.URL + '/' + id,
       method: 'GET',
       responseType: 'json',
-      //data,
       callback: (err, response) => {
         callback(err, response);
       }

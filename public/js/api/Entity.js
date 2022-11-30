@@ -8,41 +8,21 @@ class Entity {
    * Это могут быть счета или доходы/расходы
    * (в зависимости от того, что наследуется от Entity)
    * */
-  constructor() {
-    this.URL = '';
-  }
+  
+  static URL = '';
 
   static list(data, callback){
     createRequest({
-      url: '/account',
+      url: this.URL,
       method: 'GET',
       responseType: 'json',
       data,
       callback: (err, response) => {
-        //if (response && response.success) {
-        //  return response.data;
-        //}
-        //return err;
         callback(err, response);
       }
     });
   }
-  static list2(data, callback){
-    createRequest({
-      url: '/transaction',
-      method: 'GET',
-      responseType: 'json',
-      data,
-      callback: (err, response) => {
-        //if (response && response.success) {
-        //  return response.data;
-        //}
-        //return err;
-        callback(err, response);
-      }
-    });
-  }
-
+  
   /**
    * Создаёт счёт или доход/расход с помощью запроса
    * на сервер. (в зависимости от того,
@@ -50,31 +30,11 @@ class Entity {
    * */
   static create(data, callback) {
     createRequest({
-      url: '/account',
+      url: this.URL,
       method: 'PUT',
       responseType: 'json',
       data,
       callback: (err, response) => {
-        //if (response && response.success) {
-        //  return response.data;
-        //}
-        //return err;
-        callback(err, response);
-      }
-    });
-  }
-
-  static create2(data, callback) {
-    createRequest({
-      url: '/transaction',
-      method: 'PUT',
-      responseType: 'json',
-      data,
-      callback: (err, response) => {
-        //if (response && response.success) {
-        //  return response.data;
-        //}
-        //return err;
         callback(err, response);
       }
     });
@@ -86,32 +46,14 @@ class Entity {
    * */
   static remove(data, callback ) {
     createRequest({
-      url: '/account',
+      url: this.URL,
       method: 'DELETE',
       responseType: 'json',
       data,
       callback: (err, response) => {
-        //if (response && response.success) {
-        //  return response.data;
-        //}
-        //return err;
         callback(err, response);
       }
     });
   }
-  static remove2(data, callback ) {
-    createRequest({
-      url: '/transaction',
-      method: 'DELETE',
-      responseType: 'json',
-      data,
-      callback: (err, response) => {
-        //if (response && response.success) {
-        //  return response.data;
-        //}
-        //return err;
-        callback(err, response);
-      }
-    });
-  }
+  
 }

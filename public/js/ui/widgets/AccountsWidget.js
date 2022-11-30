@@ -114,14 +114,6 @@ class AccountsWidget {
     a.append(' ₽');
     li.appendChild(a);
     return li;
-    //return `
-    //  <li class="account" data-id=${item.id}>
-    //    <a href="#">
-    //      <span>${item.name}</span> /
-    //      <span>${item.sum} ₽</span>
-    //    </a>
-    //  </li>
-    //`;
   }
 
   /**
@@ -132,12 +124,8 @@ class AccountsWidget {
    * */
   renderItem(data){
     for (let item of data) {
-      //this.element.insertAdjacentHTML("beforeend", this.getAccountHTML(item));
       let account = this.getAccountHTML(item);
-      //account.addEventListener('click', () => {
-        //event.preventDefault();
       this.onSelectAccount(account, item);
-      //})  
       this.element.insertAdjacentElement('beforeend', account);
     }
   }

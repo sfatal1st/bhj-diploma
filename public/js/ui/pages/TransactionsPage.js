@@ -72,7 +72,7 @@ class TransactionsPage {
    * */
   removeTransaction( id ) {
     if (confirm('Вы действительно хотите удалить эту транзакцию?')) {
-      Transaction.remove2(id, (err, response) => {
+      Transaction.remove(id, (err, response) => {
         if (response && response.success) {
           App.update();
         } else if (response) {
@@ -98,7 +98,7 @@ class TransactionsPage {
           alert(response.error);
         }
       });
-      Transaction.list2(options, (err, response) => {
+      Transaction.list(options, (err, response) => {
         if (response && response.success) {       
           this.renderTransactions(response.data);
         } else if (response) {
