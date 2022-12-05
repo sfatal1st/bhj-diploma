@@ -51,7 +51,9 @@ class TransactionsPage {
   removeAccount() {
     if (confirm('Вы действительно хотите удалить счёт?')) {
       if (this.lastOptions) {
-        Account.remove(this.lastOptions.account_id, (err, response) => {
+        let id = this.lastOptions.account_id;
+        console.log( id );
+        Account.remove( {'id': id}, (err, response) => {
           if (response && response.success) {
             this.clear();
             App.updateWidgets();
@@ -72,7 +74,8 @@ class TransactionsPage {
    * */
   removeTransaction( id ) {
     if (confirm('Вы действительно хотите удалить эту транзакцию?')) {
-      Transaction.remove(id, (err, response) => {
+      console.log( id);
+      Transaction.remove({'id': id}, (err, response) => {
         if (response && response.success) {
           App.update();
         } else if (response) {
@@ -220,7 +223,7 @@ class TransactionsPage {
       let transaction = this.getTransactionHTML(item);
       this.element.querySelector('.content').insertAdjacentElement('beforeend', transaction);
       transaction.addEventListener('click', () => {
-        this.removeTransaction(item.account_id);
+        this.removeTransaction(item.id);
       });
     });
   }

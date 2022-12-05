@@ -42,9 +42,8 @@ class User {
       method: 'GET',
       responseType: 'json',
       callback( err, response ) {
-        if ( response && response.succes) {
-          User.setCurrent( response.user );
-          //return response;
+        if ( response && response.success) {
+          User.setCurrent(response.user);
           } else {
             User.unsetCurrent();
           }
@@ -67,7 +66,7 @@ class User {
       data,
       callback: (err, response) => {
         if (response && response.user) {
-          this.setCurrent(response.user);
+          User.setCurrent(response.user);
         }
         callback(err, response);
       }
@@ -88,7 +87,7 @@ class User {
       data,
       callback: (err, response) => {
         if (response && response.user) {
-          this.setCurrent(response.user);
+          User.setCurrent(response.user);
         }
         callback(err, response);
       }
@@ -106,7 +105,7 @@ class User {
       responseType: 'json',
       callback: (err, response) => {
         if (response && response.user) {
-          this.unsetCurrent();
+          User.unsetCurrent();
         }
         callback(err, response);
       }
